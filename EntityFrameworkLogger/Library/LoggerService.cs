@@ -37,6 +37,11 @@ namespace EntityFrameworkLogger.Library
             }
         }
 
+        public IReadOnlyCollection<EntityChange<TEntity>> GetChangesByEntityId<TEntity>(int entityId)
+        {
+            return (IReadOnlyCollection<EntityChange<TEntity>>) _loggingDict[typeof(TEntity)];
+        }
+
         private void AddEntityChange(DbEntityEntry dbEntityEntry, EntityOperations entityOperation)
         {
             var entityType = dbEntityEntry.Entity.GetType().BaseType; // cause we are using dynamic proxies web must use BaseType
@@ -64,11 +69,6 @@ namespace EntityFrameworkLogger.Library
             }
 
             _loggingDict[entityType].Add(entityChange);
-        }
-
-        public IReadOnlyCollection<EntityChange<TEntity>> GetChangesByEntityId<TEntity>(int entityId)
-        {
-            return (IReadOnlyCollection<EntityChange<TEntity>>) _loggingDict[typeof(TEntity)];
         }
     }
 }

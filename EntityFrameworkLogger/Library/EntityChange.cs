@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace EntityFrameworkLogger.Library
 {
+    // ReSharper disable once UnusedTypeParameter
     public class EntityChange<TEntity>
     {
         public EntityOperations EntityOperation { get; set; }

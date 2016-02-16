@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using EntityFrameworkLogger.Library;
@@ -46,44 +45,6 @@ namespace EntityFrameworkLogger.Tests
             Assert.IsTrue(change.ValueChanges.Select(x => x.FieldName).Contains(modifiedFieldName), "'Name' is not in the ValuesChanges");
             Assert.AreEqual(oldName, change.ValueChanges.Single(x => x.FieldName == modifiedFieldName).OldValue);
             Assert.AreEqual(newName, change.ValueChanges.Single(x => x.FieldName == modifiedFieldName).NewValue);
-        }
-    }
-
-    public class TestController
-    {
-        private readonly EntityFrameworkLoggerContext _context;
-        private readonly LoggerService _loggerService;
-
-        public TestController(EntityFrameworkLoggerContext context, LoggerService loggerService)
-        {
-            _context = context;
-            _loggerService = loggerService;
-        }
-
-        public IReadOnlyCollection<Artist> GetArtists()
-        {
-            return _context.Artist.ToList();
-        }
-
-        public void UpdateArtistName(Artist artist, string newName)
-        {
-            artist.Name = newName;
-
-            _loggerService.LogChanges();
-            _context.SaveChanges();
-        }
-    }
-
-    public class TestModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            base.Load(builder);
-
-            builder.Register(x => new EntityFrameworkLoggerContext()).InstancePerLifetimeScope();
-
-            builder.RegisterType<LoggerService>().InstancePerLifetimeScope();
-            builder.RegisterType<TestController>();
         }
     }
 }
