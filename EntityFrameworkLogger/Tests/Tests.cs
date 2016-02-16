@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using EntityFrameworkLogger.Library;
 using EntityFrameworkLogger.Model;
 using NUnit.Framework;
 
@@ -26,16 +27,25 @@ namespace EntityFrameworkLogger.Tests
             var testController = _ioc.Resolve<TestController>();
 
             var artists = testController.GetArtists();
-
             Assert.IsNotEmpty(artists);
 
             var artist = artists.First();
-            
-            testController.UpdateArtistName(artist, "New name" + new Random().Next(100));
+            var oldName = artist.Name;
+            var newName = "New name" + new Random().Next(100);
+            testController.UpdateArtistName(artist, newName);
 
             var loggerService = _ioc.Resolve<LoggerService>();
 
-            loggerService.GetChangesByEntityId<Artist>(artist.ArtistId);
+            var changes = loggerService.GetChangesByEntityId<Artist>(artist.ArtistId);
+            Assert.AreEqual(1, changes.Count);
+
+            var change = changes.First();
+            Assert.AreEqual(EntityOperations.Modified, change.EntityOperation);
+
+            var modifiedFieldName = "Name";
+            Assert.IsTrue(change.ValueChanges.Select(x => x.FieldName).Contains(modifiedFieldName), "'Name' is not in the ValuesChanges");
+            Assert.AreEqual(oldName, change.ValueChanges.Single(x => x.FieldName == modifiedFieldName).OldValue);
+            Assert.AreEqual(newName, change.ValueChanges.Single(x => x.FieldName == modifiedFieldName).NewValue);
         }
     }
 

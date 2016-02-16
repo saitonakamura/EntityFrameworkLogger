@@ -78,7 +78,8 @@ ipch/
 *.ncb
 *.opendb
 *.opensdf
-*.sdf
+# i need sdf db in project
+# *.sdf
 *.cachefile
 
 # Visual Studio profiler

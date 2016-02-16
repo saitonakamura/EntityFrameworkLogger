@@ -76,7 +76,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerService.cs" />
+    <Compile Include="Library\EntityChange.cs" />
+    <Compile Include="Library\EntityOperations.cs" />
+    <Compile Include="Library\EntityValueChange.cs" />
+    <Compile Include="Library\LoggerService.cs" />
     <Compile Include="Model\EntityFrameworkLoggerContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Tests.cs" />
