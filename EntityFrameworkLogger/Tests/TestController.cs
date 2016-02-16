@@ -7,25 +7,22 @@ namespace EntityFrameworkLogger.Tests
 {
     public class TestController
     {
-        private readonly EntityFrameworkLoggerContext _context;
-        private readonly LoggerService _loggerService;
+        private readonly IUnitOfWork _context;
 
-        public TestController(EntityFrameworkLoggerContext context, LoggerService loggerService)
+        public TestController(IUnitOfWork context)
         {
             _context = context;
-            _loggerService = loggerService;
         }
 
         public IReadOnlyCollection<Artist> GetArtists()
         {
-            return _context.Artist.ToList();
+            return _context.Query<Artist>().ToList();
         }
 
         public void UpdateArtistName(Artist artist, string newName)
         {
             artist.Name = newName;
 
-            _loggerService.LogChanges();
             _context.SaveChanges();
         }
     }

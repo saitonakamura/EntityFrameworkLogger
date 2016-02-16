@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Autofac.Extras.DynamicProxy2;
 using EntityFrameworkLogger.Library;
 using EntityFrameworkLogger.Model;
 
@@ -13,6 +14,10 @@ namespace EntityFrameworkLogger.Tests
             builder.Register(x => new EntityFrameworkLoggerContext()).InstancePerLifetimeScope();
 
             builder.RegisterType<LoggerService>().InstancePerLifetimeScope();
+            builder.RegisterType<LoggerServiceInterceptor>();
+
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().EnableInterfaceInterceptors().InterceptedBy(typeof(LoggerServiceInterceptor)).InstancePerLifetimeScope();
+
             builder.RegisterType<TestController>();
         }
     }
