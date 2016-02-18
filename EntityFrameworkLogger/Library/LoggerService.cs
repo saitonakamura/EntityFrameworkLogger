@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
@@ -11,11 +10,12 @@ namespace EntityFrameworkLogger.Library
     public class LoggerService
     {
         private readonly EntityFrameworkLoggerContext _context;
-        private readonly IDictionary<Type, IList> _loggingDict = new Dictionary<Type, IList>();
+        private readonly LoggerStorage _loggerStorage;
 
-        public LoggerService(EntityFrameworkLoggerContext context)
+        public LoggerService(EntityFrameworkLoggerContext context, LoggerStorage loggerStorage)
         {
             _context = context;
+            _loggerStorage = loggerStorage;
         }
 
         public void LogChanges()
@@ -37,11 +37,6 @@ namespace EntityFrameworkLogger.Library
             }
         }
 
-        public IReadOnlyCollection<EntityChange<TEntity>> GetChangesByEntityId<TEntity>(int entityId)
-        {
-            return (IReadOnlyCollection<EntityChange<TEntity>>) _loggingDict[typeof(TEntity)];
-        }
-
         private void AddEntityChange(DbEntityEntry dbEntityEntry, EntityOperations entityOperation)
         {
             var entityType = dbEntityEntry.Entity.GetType().BaseType; // cause we are using dynamic proxies web must use BaseType
@@ -54,21 +49,7 @@ namespace EntityFrameworkLogger.Library
                 dbEntityEntry.CurrentValues.PropertyNames.Select(
                     propertyName => new EntityValueChange(propertyName, dbEntityEntry.OriginalValues[propertyName], dbEntityEntry.CurrentValues[propertyName])).ToList();
 
-            CreateOrUpdateEntityChange(entityChange, entityType);
-        }
-
-        private void CreateOrUpdateEntityChange(object entityChange, Type entityType)
-        {
-            if (_loggingDict.ContainsKey(entityType) == false)
-            {
-                var type = typeof(EntityChange<>).MakeGenericType(entityType);
-                var listType = typeof(List<>).MakeGenericType(type);
-                var list = (IList) Activator.CreateInstance(listType);
-
-                _loggingDict.Add(entityType, list);
-            }
-
-            _loggingDict[entityType].Add(entityChange);
+            _loggerStorage.AddEntityChange(entityChange, entityType);
         }
     }
 }

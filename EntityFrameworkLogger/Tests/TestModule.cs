@@ -13,7 +13,8 @@ namespace EntityFrameworkLogger.Tests
 
             builder.Register(x => new EntityFrameworkLoggerContext()).InstancePerLifetimeScope();
 
-            builder.RegisterType<LoggerService>().InstancePerLifetimeScope();
+            builder.RegisterType<LoggerStorage>().InstancePerLifetimeScope();
+            builder.RegisterType<LoggerService>();
             builder.RegisterType<LoggerServiceInterceptor>();
 
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().EnableInterfaceInterceptors().InterceptedBy(typeof(LoggerServiceInterceptor)).InstancePerLifetimeScope();

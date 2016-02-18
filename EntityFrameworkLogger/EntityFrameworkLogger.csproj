@@ -82,6 +82,7 @@
     <Compile Include="Library\IUnitOfWork.cs" />
     <Compile Include="Library\LoggerService.cs" />
     <Compile Include="Library\LoggerServiceInterceptor.cs" />
+    <Compile Include="Library\LoggerStorage.cs" />
     <Compile Include="Library\UnitOfWork.cs" />
     <Compile Include="Model\Album.cs" />
     <Compile Include="Model\Artist.cs" />

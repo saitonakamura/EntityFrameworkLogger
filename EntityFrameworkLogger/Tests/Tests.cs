@@ -33,9 +33,9 @@ namespace EntityFrameworkLogger.Tests
             var newName = "New name" + new Random().Next(100);
             testController.UpdateArtistName(artist, newName);
 
-            var loggerService = _ioc.Resolve<LoggerService>();
+            var loggerStorage = _ioc.Resolve<LoggerStorage>();
 
-            var changes = loggerService.GetChangesByEntityId<Artist>(artist.ArtistId);
+            var changes = loggerStorage.GetChangesByEntityId<Artist>(artist.ArtistId);
             Assert.AreEqual(1, changes.Count);
 
             var change = changes.First();
